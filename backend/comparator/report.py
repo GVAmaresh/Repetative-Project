@@ -126,7 +126,7 @@ def AddSummary(service, details):
             .execute()
         )
         list_all_files = response["files"]
-
+        
         is_selected = False
         file_name = ""
 

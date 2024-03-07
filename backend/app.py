@@ -37,21 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.post("/api/upload")
-async def upload_file(file: UploadFile = File(...)):
-    try:
-        CheckFolders(services)
-        # data = AddReport(services, "report-new", "./delete/report.pdf")
-        data = AddSummary(services, {"name": "dont know", "room": "wanna check"})
-        return JSONResponse(content={"message": data, "success": True})
-    except Exception as e:
-        return JSONResponse(
-            status_code=500, content={"error": str(e), "success": False}
-        )
-
-
-@app.get("/check/upload")
+@app.get("/api/upload")
 async def upload_file():
     try:
         CheckFolders(services)
@@ -59,12 +45,13 @@ async def upload_file():
         path = "./delete/report.pdf"
         text = extract_text_from_pdf(path)
         summary = Summerized_Text(text)
-        AddReport(services, summerized_id, path)
+        report_id = AddReport(services, summerized_id, path)
         AddSummary(
             services,
             {
                 "id": summerized_id,
                 "summary": summary,
+                "drive":f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
                 "year": "2023",
                 "category": ["wanna check"],
             },
@@ -77,7 +64,7 @@ async def upload_file():
                     os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return JSONResponse(content={"message": "Successfully added Report and Summery", "success": True})
+        return JSONResponse(content={"message": "Successfully added Report and Summary", "success": True})
     except Exception as e:
         return JSONResponse(
             status_code=500, content={"error": str(e), "success": False}
