@@ -34,8 +34,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-delete/*
+
 delete/
 token_drive_v3.pickle
-backend/token_drive_v3.pickle
-backend/token_drive_v3.pickle
+/backend/token_drive_v3.pickle
+
+
+/backend/delete
+/backend/client_secret.json
+

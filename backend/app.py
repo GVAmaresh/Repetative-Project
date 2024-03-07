@@ -10,14 +10,17 @@ from api_connection.apiConnection import Create_Service
 from comparator.report import (
     AddReport,
     CheckFolders,
-    AddSummary,
     DeleteReport,
-    DeleteSummary,
 )
+
+from comparator.summerized import AddSummary, DeleteSummary, Get_All_Reports
+
 from api_connection.apiConnection import removeAccount
 import uuid
 from comparator.text_summerizer.summerize2 import Summerized_Text
 from comparator.extract.extract import extract_text_from_pdf
+
+from comparator.compareSummerized import compareText
 
 """
 Folder Path in drive would be:
@@ -112,6 +115,59 @@ async def delete_file():
 @app.delete("/api/logout")
 async def delete_account():
     removeAccount()
+
+
+@app.get("/api/getReports")
+async def get_reports():
+    try:
+        data = Get_All_Reports(services)
+        try:
+            directory = "."
+            for filename in os.listdir(directory):
+                if filename.startswith("data-"):
+                    file_path = "./" + filename
+                    os.remove(file_path)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+        return JSONResponse(
+            content={
+                "message": data,
+                "success": True,
+            }
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500, content={"error": str(e), "success": False}
+        )
+
+
+@app.get("/api/compare")
+async def compare():
+    try:
+        summary = "Parkinson's disease (PD) is a chronic, degenerative disorder of the central nervous system that predominantly impacts human motor function. Individuals with PD often experience recurrent falls, which can lead to severe consequences, including fatalities or critical situations. To address this, we have proposed a solution that detects patient falls and promptly notifies caretakers or family members through messages, calls, or alarms, thus helping prevent tragic outcomes.",
+        data = compareText(
+            services,
+            summary
+        )
+        try:
+            directory = "."
+            for filename in os.listdir(directory):
+                if filename.startswith("data-"):
+                    file_path = "./" + filename
+                    os.remove(file_path)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+        return JSONResponse(
+            content={
+                "summary": summary,
+                "compare": data,
+                "success": True,
+            }
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500, content={"error": str(e), "success": False}
+        )
 
 
 if __name__ == "__main__":
