@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import LinearProgressWithDetail from "@/components/FeedBack/loadProgress";
-import { AddFolderAPI } from "@/lib/fetch";
+import { AddFileAPI, AddFolderAPI } from "@/lib/fetch";
 
 interface FileInfo {
   name: string;
@@ -9,7 +9,7 @@ interface FileInfo {
   progress: string;
 }
 
-function AddFiles() {
+function CompareReport() {
   const [load, setLoad] = useState<FileInfo[] | null>(null);
 
   const handleChange = async (files: File[]) => {
@@ -30,7 +30,7 @@ function AddFiles() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
-        const data = await AddFolderAPI(file);
+        const data = await AddFileAPI(file);
         if (!data.success) {
           setLoad((prevState) => {
             if (prevState instanceof Array) {
@@ -64,7 +64,6 @@ function AddFiles() {
             handleChange={handleChange}
             name="file"
             types={["pdf"]}
-            multiple={true}
             maxSize={5}
           >
             {load && load.map((item) => (
@@ -82,4 +81,4 @@ function AddFiles() {
   );
 }
 
-export default AddFiles;
+export default CompareReport;
