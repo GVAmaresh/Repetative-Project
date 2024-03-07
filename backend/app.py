@@ -7,7 +7,7 @@ from typing import Annotated
 import os
 import shutil
 from api_connection.apiConnection import Create_Service
-from comparator.report import AddReport, CheckFolders, AddSummary, DeleteReport
+from comparator.report import AddReport, CheckFolders, AddSummary, DeleteReport, DeleteSummary
 from api_connection.apiConnection import removeAccount
 import uuid
 from comparator.text_summerizer.summerize2 import Summerized_Text
@@ -71,33 +71,18 @@ async def upload_file():
         )
 
 
-@app.post("/api/delete")
-async def delete_file(file: UploadFile = File(...)):
+@app.get("/api/delete")
+async def delete_file():
     try:
-        data = DeleteReport(services, "report-name")
-        return JSONResponse(content={"message": data, "success": True})
+        report_name = "64794277-3c81-4dc0-9b65-03fe9698b9dc"
+        DeleteSummary(services, report_name)
+        DeleteReport(services, report_name)
+        return JSONResponse(content={"message": "Successfully Deleted Summary and Report", "success": True})
     except Exception as e:
         return JSONResponse(
             status_code=500, content={"error": str(e), "success": False}
         )
 
-
-## delete it##
-
-# @app.get("/check/delete")
-# async def check():
-#     try:
-#         data = DeleteReport(services, "report-new")
-#         return JSONResponse(
-#             content={"message": data, "success": True}
-#         )
-#     except Exception as e:
-#         return JSONResponse(
-#             status_code=500, content={"error": str(e), "success": False}
-#         )
-
-
-######
 @app.delete("/api/logout")
 async def delete_account():
     removeAccount()
