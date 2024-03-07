@@ -7,7 +7,13 @@ from typing import Annotated
 import os
 import shutil
 from api_connection.apiConnection import Create_Service
-from comparator.report import AddReport, CheckFolders, AddSummary, DeleteReport, DeleteSummary
+from comparator.report import (
+    AddReport,
+    CheckFolders,
+    AddSummary,
+    DeleteReport,
+    DeleteSummary,
+)
 from api_connection.apiConnection import removeAccount
 import uuid
 from comparator.text_summerizer.summerize2 import Summerized_Text
@@ -37,6 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/api/upload")
 async def upload_file():
     try:
@@ -51,20 +58,25 @@ async def upload_file():
             {
                 "id": summerized_id,
                 "summary": summary,
-                "drive":f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
+                "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
                 "year": "2023",
                 "category": ["wanna check"],
             },
         )
         try:
-            directory = "." 
+            directory = "."
             for filename in os.listdir(directory):
                 if filename.startswith("data-"):
-                    file_path = "./"+ filename
+                    file_path = "./" + filename
                     os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return JSONResponse(content={"message": "Successfully added Report and Summary", "success": True})
+        return JSONResponse(
+            content={
+                "message": "Successfully added Report and Summary",
+                "success": True,
+            }
+        )
     except Exception as e:
         return JSONResponse(
             status_code=500, content={"error": str(e), "success": False}
@@ -77,11 +89,25 @@ async def delete_file():
         report_name = "64794277-3c81-4dc0-9b65-03fe9698b9dc"
         DeleteSummary(services, report_name)
         DeleteReport(services, report_name)
-        return JSONResponse(content={"message": "Successfully Deleted Summary and Report", "success": True})
+        try:
+            directory = "."
+            for filename in os.listdir(directory):
+                if filename.startswith("data-"):
+                    file_path = "./" + filename
+                    os.remove(file_path)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+        return JSONResponse(
+            content={
+                "message": "Successfully Deleted Summary and Report",
+                "success": True,
+            }
+        )
     except Exception as e:
         return JSONResponse(
             status_code=500, content={"error": str(e), "success": False}
         )
+
 
 @app.delete("/api/logout")
 async def delete_account():
