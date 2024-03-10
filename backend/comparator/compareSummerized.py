@@ -37,23 +37,18 @@ def compareText(service, summary):
                 file_name = list_files["name"]
 
                 for json_data in existing_details:
-                    print("start ================================================")
-                    print(json_data["summary"])
-                    print("================================================")
-                    print(summary[0])
-                    print("================================================")
                     value = checkSimilarity(summary[0], json_data["summary"])
-                    print("================================================ end")
                     all_reports.append(
                         {
                             "id": json_data["id"],
                             "year": json_data["year"],
                             "drive": json_data["drive"],
                             "summary": json_data["summary"],
-                            "value": value,
+                            "category": json_data["category"],
+                            "title": "",
+                            "compare": value,
                         }
                     )
-
         return all_reports
 
     except Exception as e:

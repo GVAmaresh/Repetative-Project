@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Annotated
 import os
 import shutil
+from typing import List
+from pydantic import BaseModel
 from api_connection.apiConnection import Create_Service
 from comparator.report import (
     AddReport,
@@ -30,6 +32,10 @@ Folder Path in drive would be:
 """
 
 
+class IDRequest(BaseModel):
+    ids: List[str]
+
+
 CLIENT_FILE_NAME = "./client_secret.json"
 API_DRIVE = "drive"
 API_VERSION = "v3"
@@ -47,12 +53,18 @@ app.add_middleware(
 )
 
 
-@app.get("/api/upload")
-async def upload_file():
+@app.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
     try:
+        # print(file)
         CheckFolders(services)
         summerized_id = str(uuid.uuid4())
-        path = "./delete/report.pdf"
+        file_contents = await file.read()
+        # print(file_contents)
+        path = f"./delete/{file.filename}"
+        with open(path, "wb") as f:
+            f.write(file_contents)
+        # print("Running upload")
         text = extract_text_from_pdf(path)
         summary = Summerized_Text(text)
         report_id = AddReport(services, summerized_id, path)
@@ -60,6 +72,7 @@ async def upload_file():
             services,
             {
                 "id": summerized_id,
+                "project": "",
                 "summary": summary,
                 "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
                 "year": "2023",
@@ -72,11 +85,24 @@ async def upload_file():
                 if filename.startswith("data-"):
                     file_path = "./" + filename
                     os.remove(file_path)
+                if filename.startswith("delete"):
+                    file_path = path
+                    os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
+        print("Uploaded Successfully")
         return JSONResponse(
             content={
                 "message": "Successfully added Report and Summary",
+                "data": {
+                    "id": summerized_id,
+                    "compare": "",
+                    "title": "",
+                    "summary": summary,
+                    "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
+                    "year": "2023",
+                    "category": ["wanna check"],
+                },
                 "success": True,
             }
         )
@@ -86,30 +112,30 @@ async def upload_file():
         )
 
 
-@app.get("/api/delete")
-async def delete_file():
+@app.post("/api/delete")
+async def delete_files(request: IDRequest):
     try:
-        report_name = "64794277-3c81-4dc0-9b65-03fe9698b9dc"
-        DeleteSummary(services, report_name)
-        DeleteReport(services, report_name)
-        try:
-            directory = "."
-            for filename in os.listdir(directory):
-                if filename.startswith("data-"):
-                    file_path = "./" + filename
-                    os.remove(file_path)
-        except Exception as e:
-            print(f"An error occurred: {str(e)}")
+        for report_name in request.ids:
+            print(report_name)
+            DeleteSummary(services, report_name)
+            DeleteReport(services, report_name)
+            try:
+                directory = "."
+                for filename in os.listdir(directory):
+                    if filename.startswith("data-"):
+                        file_path = "./" + filename
+                        os.remove(file_path)
+            except Exception as e:
+                print(f"An error occurred: {str(e)}")
         return JSONResponse(
             content={
                 "message": "Successfully Deleted Summary and Report",
                 "success": True,
             }
         )
+
     except Exception as e:
-        return JSONResponse(
-            status_code=500, content={"error": str(e), "success": False}
-        )
+        raise HTTPException(status_code=500, detail={"error": str(e), "success": False})
 
 
 @app.delete("/api/logout")
@@ -131,7 +157,7 @@ async def get_reports():
             print(f"An error occurred: {str(e)}")
         return JSONResponse(
             content={
-                "message": data,
+                "data": data,
                 "success": True,
             }
         )
@@ -141,26 +167,42 @@ async def get_reports():
         )
 
 
-@app.get("/api/compare")
-async def compare():
+@app.post("/api/compare")
+async def compare(file: UploadFile = File(...)):
     try:
-        summary = "Parkinson's disease (PD) is a chronic, degenerative disorder of the central nervous system that predominantly impacts human motor function. Individuals with PD often experience recurrent falls, which can lead to severe consequences, including fatalities or critical situations. To address this, we have proposed a solution that detects patient falls and promptly notifies caretakers or family members through messages, calls, or alarms, thus helping prevent tragic outcomes.",
-        data = compareText(
-            services,
-            summary
-        )
+        CheckFolders(services)
+        summerized_id = str(uuid.uuid4())
+        file_contents = await file.read()
+        # print(file_contents)
+        path = f"./delete/{file.filename}"
+        with open(path, "wb") as f:
+            f.write(file_contents)
+        # print("Running upload")
+        text = extract_text_from_pdf(path)
+        summary = Summerized_Text(text)
+        path = f"./delete/{file.filename}"
+        print("Finished 2")
+        with open(path, "wb") as f:
+            f.write(file_contents)
+        print("Finished")
+        data = compareText(services, summary)
+        print("Running 3")
         try:
             directory = "."
             for filename in os.listdir(directory):
                 if filename.startswith("data-"):
                     file_path = "./" + filename
                     os.remove(file_path)
+                if filename.startswith("delete"):
+                    file_path = path
+                    os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
+        print("Running 4")
         return JSONResponse(
             content={
                 "summary": summary,
-                "compare": data,
+                "data": data,
                 "success": True,
             }
         )
