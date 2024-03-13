@@ -14,6 +14,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { styled } from "@mui/material/styles";
 import { DeleteFileAPI, GetFileAPI } from "@/lib/fetch";
 import Link from "next/link";
+import BasicTable from "./BasicTable";
 
 const Demo = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -21,6 +22,7 @@ const Demo = styled("div")(({ theme }) => ({
 const listItemStyle = {
   "&:hover": {
     backgroundColor: "transparent",
+    width: "50%",
   },
 };
 
@@ -40,10 +42,10 @@ export default function FileFeedback({
   size,
   progress,
 }: {
-    fileName: string;
-    size: number;
-    progress: string;
-    data: Naming;
+  fileName: string;
+  size: number;
+  progress: string;
+  data: Naming;
 }) {
   const [reload, setReload] = React.useState(false);
   const [isClicked, setIsClicked] = React.useState(false);
@@ -56,11 +58,9 @@ export default function FileFeedback({
     progress: string
   ) => {
     return (
-      <ListItem sx={listItemStyle} key={dataItem.id}>
+      <ListItem key={dataItem.id}>
         <ListItemButton role={undefined} dense>
-          <ListItemIcon></ListItemIcon>
-
-          <Accordion>
+          <Accordion sx={{ width: "100%" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -71,38 +71,23 @@ export default function FileFeedback({
               }}
             >
               <div className="summary-container ">
-                <div className=" font-bold">{dataItem.title || "Heading"}</div>
-                <div className=" font-thin text-sm  ">{dataItem.compare != "" && `Compare: ${dataItem.compare}` || "Compare"}</div>
+                <div className="font-bold">{dataItem.title || "Heading"}</div>
+                <div className="font-thin text-sm">
+                  {(dataItem.compare != "" && `Compare: ${dataItem.compare}`) ||
+                    "Compare"}
+                </div>
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>Category</td>
-                    <td>{dataItem.category}</td>
-                  </tr>
-                  <tr>
-                    <td>Drive</td>
-                    <Link
-                      href={dataItem.drive}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-cyan-300"
-                    >
-                      {dataItem.drive}
-                    </Link>
-                  </tr>
-                  <tr>
-                    <td>Summary</td>
-                    <td>{dataItem.summary}</td>
-                  </tr>
-                  <tr>
-                    <td>Year</td>
-                    <td>{dataItem.year}</td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <BasicTable
+  rows={[
+    { name: 'Category', imf: dataItem.category},
+    { name: 'Drive', imf: dataItem.drive},
+    { name: 'Summary', imf: dataItem.summary},
+    { name: 'Year', imf: dataItem.year},
+  ]}
+/>
             </AccordionDetails>
           </Accordion>
         </ListItemButton>
@@ -116,13 +101,7 @@ export default function FileFeedback({
         event.stopPropagation();
       }}
     >
-      <div className="font-extrabold w-72 md:w-1/3 flex items-center justify-between">
-        <div className="">
-        </div>
-      </div>
-      <List dense={false} sx={listItemStyle}>
-        {generate(data, fileName, size, progress)}
-      </List>
+      <List dense={false}>{generate(data, fileName, size, progress)}</List>
     </Demo>
   );
 }

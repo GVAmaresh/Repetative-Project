@@ -41,7 +41,7 @@ export default function LinearProgressWithDetail({
   console.log("data = ", data)
   return (
     <>
-      <div className="progressCard rounded-lg mb-2">
+      <div className="progressCard rounded-lg mb-2  md:w-full">
         {progress == "progress" ? (
           <Box
             sx={{
@@ -54,7 +54,7 @@ export default function LinearProgressWithDetail({
             <CircularProgress />
           </Box>
         ) : progress == "success" ? (
-          <div className="text-lime-400 ">
+          <div className="text-lime-400 text-2xl w-96 md:text-base md:w-full">
             <FileFeedback
               fileName={fileName}
               size={size}

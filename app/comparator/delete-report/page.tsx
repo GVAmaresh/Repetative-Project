@@ -40,7 +40,7 @@ export default function DeleteReport() {
   const [getData, setData] = React.useState<Naming[] | null>(null);
   const [reload, setReload] = React.useState(false);
   const [isClicked, setIsClicked] = React.useState(false);
-  
+
   const [checked, setChecked] = React.useState<string[]>([]);
 
   const handleDelete = () => {
@@ -101,7 +101,14 @@ export default function DeleteReport() {
                   <tr>
                     <td>Drive</td>
                     <td className="text-cyan-300">
-                      <Link href={item.drive}>{item.drive}</Link>
+                      <Link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-cyan-300"
+                        href={item.drive}
+                      >
+                        {item.drive}
+                      </Link>
                     </td>
                   </tr>
                   <tr>
@@ -121,7 +128,6 @@ export default function DeleteReport() {
     );
   };
 
-  
   React.useEffect(() => {
     GetFileAPI().then((data) => {
       setData(data.data);
@@ -129,7 +135,7 @@ export default function DeleteReport() {
   }, [setReload, setData]);
   return (
     <Demo>
-      <div className="font-extrabold border-b-2 ml-2 w-72 md:w-1/3 p-2 md:ml-20 flex items-center justify-between">
+      <div className="font-extrabold border-b-2 w-7 md:w-1/3 p-2 md:ml-20 flex items-center justify-between">
         <div className="">Select Item For Deleting</div>
         <div className="">
           {checked.length >= 1 && (

@@ -100,7 +100,7 @@ function AddFileCompare() {
   return (
     <>
       <div className="flex justify-center">
-        <div className="mt-8 w-full max-w-screen-lg">
+        <div className="mt-8">
           {!load ? (
             <FileUploader
               handleChange={handleChange}

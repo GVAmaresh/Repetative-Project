@@ -13,7 +13,7 @@ export default function Card() {
         marginTop={2}
       >
         <Grid item xs={10}>
-          <Grid container justifyContent="center" spacing={6}>
+          <Grid container justifyContent="center" spacing={1}>
             {ComparatorNav.map((item, index) => (
               <Grid key={index} item xs={6} sm={3}>
                 <CardTemplate

@@ -19,7 +19,7 @@ export default function CardTemplate({
 }) {
   return (
     <Link href={link}>
-      <Card sx={{ maxWidth: 400, height: 200 }}>
+      <Card sx={{ maxWidth: 500, height: 200 }}>
         <CardActionArea>
           <CardContent
             style={{
@@ -29,9 +29,10 @@ export default function CardTemplate({
               justifyContent: "center",
             }}
           >
-            <div className="pb-10">{icon}</div>
+            <div className="pb-7 md:pb-10 text-center">{icon}</div>
             <Typography gutterBottom variant="h5" component="div">
-              {cardName}
+              <div className=" font-extrabold text-base">{cardName}</div>
+              
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {description}

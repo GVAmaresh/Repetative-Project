@@ -98,7 +98,7 @@ function AddFiles() {
   return (
     <>
       <div className="flex justify-center">
-        <div className="mt-8 w-full max-w-screen-lg">
+        <div className="mt-8 w-fit  ">
         {!load ?<FileUploader
             handleChange={handleChange}
             name=""

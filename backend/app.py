@@ -141,12 +141,26 @@ async def delete_files(request: IDRequest):
 @app.delete("/api/logout")
 async def delete_account():
     removeAccount()
+    return JSONResponse(
+        content={
+            "message": "Successfully Deleted Account",
+            "success": True,
+        }
+    )
 
 
 @app.get("/api/getReports")
 async def get_reports():
     try:
         data = Get_All_Reports(services)
+        if len(data) == 0:
+            return JSONResponse(
+                content={
+                    "data": None,
+                    "success": True,
+                }
+            )
+
         try:
             directory = "."
             for filename in os.listdir(directory):

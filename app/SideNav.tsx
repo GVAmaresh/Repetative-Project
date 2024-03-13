@@ -95,6 +95,7 @@ export default function SideNav({
           position="fixed"
           sx={{
             width: { sm: `calc(100% - ${drawerWidth}px)` },
+            height: 60,
             ml: { sm: `${drawerWidth}px` },
           }}
         >
@@ -109,7 +110,8 @@ export default function SideNav({
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              Repetative Project X
+              <div className=" font-extrabold text-xl md:text-base">Repetative Project X</div>
+              
             </Typography>
           </Toolbar>
         </AppBar>
