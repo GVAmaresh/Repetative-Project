@@ -21,12 +21,14 @@ import Typography from "@mui/material/Typography";
 
 import { primaryNav } from "@/components/SideNav/Nav";
 import Link from "next/link";
+import { RemoveAccount } from "@/lib/fetch";
 
 const drawerWidth = 240;
 
 interface Props {
   window?: () => Window;
 }
+
 
 export default function SideNav({
   children,
