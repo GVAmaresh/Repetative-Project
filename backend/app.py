@@ -41,7 +41,7 @@ API_DRIVE = "drive"
 API_VERSION = "v3"
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 
-services = Create_Service(CLIENT_FILE_NAME, API_DRIVE, API_VERSION, SCOPES)
+# services = Create_Service(CLIENT_FILE_NAME, API_DRIVE, API_VERSION, SCOPES)
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 app.add_middleware(
@@ -141,6 +141,8 @@ async def delete_files(request: IDRequest):
 @app.delete("/api/logout")
 async def delete_account():
     removeAccount()
+    global services
+    services = Create_Service(CLIENT_FILE_NAME, API_DRIVE, API_VERSION, SCOPES)
     return JSONResponse(
         content={
             "message": "Successfully Deleted Account",
@@ -227,4 +229,8 @@ async def compare(file: UploadFile = File(...)):
 
 
 if __name__ == "__main__":
+    removeAccount()
+    # global services
+    services = Create_Service(CLIENT_FILE_NAME, API_DRIVE, API_VERSION, SCOPES)
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
