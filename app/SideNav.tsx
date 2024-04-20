@@ -21,7 +21,8 @@ import Typography from "@mui/material/Typography";
 
 import { primaryNav } from "@/components/SideNav/Nav";
 import Link from "next/link";
-import { RemoveAccount } from "@/lib/fetch";
+import { CheckLoginAPI } from "@/lib/fetch";
+// import { RemoveAccount } from "@/lib/fetch";
 
 const drawerWidth = 240;
 
@@ -56,7 +57,18 @@ export default function SideNav({
       setMobileOpen(!mobileOpen);
     }
   };
-  
+
+  React.useEffect(() => {
+    console.log("Is it running")
+    CheckLoginAPI().then((data) => {
+      console.log(data);
+      if(data.status === "success"){
+        setLogin(true)
+      }
+    });
+  }, []);
+
+  const [isLogin, setLogin] = React.useState(false);
   const drawer = (
     <div>
       <Toolbar />
@@ -162,7 +174,7 @@ export default function SideNav({
           }}
         >
           <Toolbar />
-          {children}
+          {isLogin?children:<>Loading...</>}
         </Box>
       </Box>
     </ThemeProvider>

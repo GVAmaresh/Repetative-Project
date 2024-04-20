@@ -1,5 +1,5 @@
-"use server"
-import { cookies } from 'next/headers'
+"use server";
+import { cookies } from "next/headers";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -41,14 +41,19 @@ export const AddFolderAPI = async (files: File[]) => {
 
 export const CheckLoginAPI = async () => {
   try {
+    console.log("here");
     let cookie = cookies().get("token");
     let token = cookie ? decryptToken(cookie.value) : uuidv4();
+    console.log(token);
     const response = await fetch("http://127.0.0.1:8000/api/isLogin", {
       method: "POST",
-      body: JSON.stringify({ newName: token }),
+      body: JSON.stringify({ name: token }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     if (!response.ok) {
-      throw new Error("Failed to upload files");
+      throw new Error("Failed to Login");
     }
     const data = await response.json();
     console.log(data);
@@ -56,7 +61,7 @@ export const CheckLoginAPI = async () => {
     cookies().set("token", token);
     return data;
   } catch (error) {
-    console.error("Error uploading files:", error);
+    console.error("Error Logging in:", error);
     throw error;
   }
 };
@@ -69,6 +74,9 @@ export const AddFileAPI = async (files: File) => {
     const response = await fetch("http://127.0.0.1:8000/api/compare", {
       method: "POST",
       body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     if (!response.ok) {
       throw new Error("Failed to upload files");
@@ -86,6 +94,9 @@ export const GetFileAPI = async () => {
   try {
     const response = await fetch("http://127.0.0.1:8000/api/getReports", {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     if (!response.ok) {
       throw new Error("Failed to GET Summary");
@@ -126,7 +137,7 @@ export const RemoveAccount = async () => {
     let cookie = cookies().get("token");
     let oldToken = cookie ? decryptToken(cookie.value) : "";
     let newToken = uuidv4();
-    
+
     const response = await fetch("http://127.0.0.1:8000/api/logout", {
       method: "POST",
       headers: {
@@ -134,11 +145,11 @@ export const RemoveAccount = async () => {
       },
       body: JSON.stringify({ oldName: oldToken, newName: newToken }),
     });
-    
+
     if (!response.ok) {
       throw new Error("Failed to Delete Account");
     }
-    
+
     const data = await response.json();
     let token = encryptToken(data.data);
     cookies().set("token", token);

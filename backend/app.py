@@ -34,6 +34,7 @@ class AccountInfo(BaseModel):
     oldName: str
     newName: str
 
+
 """
 Folder Path in drive would be:
     Fake/reports
@@ -60,35 +61,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+class AccountCheck(BaseModel):
+    name: str
 
-@app.get("/api/isLogin")
-async def is_login(newName=""):
+@app.post("/api/isLogin")
+async def is_login(request: AccountCheck):
     try:
         global services
-        services, name =Create_Token_Drive(newName)
+        services, name = Create_Token_Drive(request.name)
         if services:
-            return JSONResponse(
-                content={
-                    "message": "Successfully logged in",
-                    "data": name,
-                }
-            )
+            return {"message": "Successfully logged in", "data": name, "status":"success"}
         else:
-            return JSONResponse(
-                content={
-                    "message": "Failed to login",
-                    "data": False,
-                }
-            )
+            return {"message": "Failed to login", "data": False, "status":"failed"}
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return JSONResponse(
-            content={
-                "message": "Failed to login",
-                "data": False,
-            }
-        )
-
+        return {"message": "Failed to login", "data": False, "status":"failed"}
+    
 
 async def process_file(file):
     try:
@@ -128,7 +116,7 @@ async def process_file(file):
     except Exception as e:
         return {
             "message": f"Error processing {file.filename}: {str(e)}",
-            "success": False,
+            "status": "failed",
         }
 
 @app.post("/api/upload")
@@ -138,9 +126,10 @@ async def upload_files(files: List[UploadFile] = File(...)):
         with ThreadPoolExecutor() as pool:
             responses = await asyncio.gather(*[loop.run_in_executor(pool, process_file, file) for file in files])
         print("Uploaded Successfully")
-        return JSONResponse(content=responses)
+        return {"data": responses,"status":"success"}
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e), "success": False})
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
 
 
 @app.post("/api/delete")
@@ -157,15 +146,10 @@ async def delete_files(request: IDRequest):
                         os.remove(file_path)
             except Exception as e:
                 print(f"An error occurred: {str(e)}")
-        return JSONResponse(
-            content={
-                "message": "Successfully Deleted Summary and Report",
-                "success": True,
-            }
-        )
-
+        return {"message": "Successfully Deleted Summary and Report", "success": True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail={"error": str(e), "success": False})
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
 
 
 
@@ -173,19 +157,12 @@ async def delete_files(request: IDRequest):
 async def delete_account(request: AccountInfo):
     try:
         Delete_Token_File(request.oldName)
-        print("name = ", request.oldName, request.newName)
         global services  
         services, name = Create_Token_Drive(request.newName)
-        return JSONResponse(
-            content={
-                "message": "Successfully Deleted Account",
-                "data": name,
-                "success": True,
-            }
-        )
+        return {"message": "Successfully Deleted Account", "data": name, "success": True}
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error occurred.")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
 
 
 @app.get("/api/getReports")
@@ -193,12 +170,7 @@ async def get_reports():
     try:
         data = Get_All_Reports(services)
         if len(data) == 0:
-            return JSONResponse(
-                content={
-                    "data": None,
-                    "success": True,
-                }
-            )
+            return {"data": None, "status": "failed" }
         try:
             directory = "."
             for filename in os.listdir(directory):
@@ -207,16 +179,11 @@ async def get_reports():
                     os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return JSONResponse(
-            content={
-                "data": data,
-                "success": True,
-            }
-        )
+        return {"data": data, "success": True}
     except Exception as e:
-        return JSONResponse(
-            status_code=500, content={"error": str(e), "success": False}
-        )
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
+
 
 
 @app.post("/api/compare")
@@ -245,27 +212,22 @@ async def compare(file: UploadFile = File(...)):
                     os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return JSONResponse(
-            content={
-                "summary": summary,
-                "data": data,
-                "success": True,
-            }
-        )
+        return {"summary": summary, "data": data, "success": True}
     except Exception as e:
-        return JSONResponse(
-            status_code=500, content={"error": str(e), "success": False}
-        )
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
+
 
 @app.post("/api/New-Drive")
 async def NewDrive(oldName="", newName=""):
     try:
         Delete_Drive_Token()
         Create_Drive_Token()
+        return {"message": "Successfully Created a new drive", "status": "success"}
     except Exception as e:
-        return JSONResponse(
-            status_code=500, content={"error": str(e), "success": False}
-        )
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to login", "data": False, "status":"failed"}
+
 
 if __name__ == "__main__":
     # removeAccount()
