@@ -29,7 +29,6 @@ interface Props {
   window?: () => Window;
 }
 
-
 export default function SideNav({
   children,
 }: Readonly<{
@@ -57,7 +56,7 @@ export default function SideNav({
       setMobileOpen(!mobileOpen);
     }
   };
-
+  
   const drawer = (
     <div>
       <Toolbar />
@@ -90,7 +89,6 @@ export default function SideNav({
 
   return (
     <ThemeProvider theme={darkTheme}>
-      {" "}
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar
@@ -112,8 +110,9 @@ export default function SideNav({
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              <div className=" font-extrabold text-xl md:text-base">Repetative Project X</div>
-              
+              <div className=" font-extrabold text-xl md:text-base">
+                Repetative Project X
+              </div>
             </Typography>
           </Toolbar>
         </AppBar>

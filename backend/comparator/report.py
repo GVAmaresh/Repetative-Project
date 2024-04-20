@@ -92,7 +92,6 @@ def CheckFolders(service):
     fake_folder_id = checkFake(service)
     return "Folders created or already existed."
 
-
 def AddReport(service, fileName, file):
     fake_folder_id = checkRespectiveFolder(service)
     report_folder_id = checkRespectiveFolder(
@@ -107,10 +106,6 @@ def AddReport(service, fileName, file):
         .execute()
     )
     return newFile.get("id")
-
-
-
-
 
 def DeleteReport(service, fileName):
     fake_folder_id = checkRespectiveFolder(service)

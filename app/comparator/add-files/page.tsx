@@ -1,9 +1,9 @@
+
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import LinearProgressWithDetail from "@/components/FeedBack/loadProgress";
-import { AddFileAPI, AddFolderAPI } from "@/lib/fetch";
-import { title } from "process";
+import { AddFolderAPI } from "@/lib/fetch";
 
 interface FileInfo {
   name: string;
@@ -11,94 +11,70 @@ interface FileInfo {
   progress: string;
 }
 
-interface Naming {
-  category: string[];
-  drive: string;
-  id: string;
-  summary: string;
-  year: string;
-  title: string;
-  compare:string
+interface ApiResult {
+  success: boolean;
+  data: {
+    category: string[];
+    drive: string;
+    id: string;
+    summary: string;
+    year: string;
+    title: string;
+    compare: string;
+  };
 }
 
 function AddFiles() {
   const [load, setLoad] = useState<FileInfo[] | null>(null);
-  const [data, setData] = useState<Naming[] | []>([]);
-  const handleChange = async (files: File[]) => {
+  const [data, setData] = useState<ApiResult[]>([]);
+
+  const handleChange = async (files: FileList | null) => {
     if (!files || files.length === 0) {
       console.log("No files selected.");
       return;
     }
-
-    const filesInfo = Array.from(files).map((file) => ({
+  
+    const filesArray = Array.from(files);
+    const filesInfo = filesArray.map((file) => ({
       name: file.name,
       size: file.size,
       progress: "progress",
     }));
-
+  
     setLoad(filesInfo);
-
+  
     try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const data = await AddFolderAPI(file);
-        console.log(data);
-        if (!data.success) {
-          // setData(e=>[...e, data.data]);
-          setLoad((prevState) => {
-            if (prevState instanceof Array) {
-              const updatedFiles = [...prevState];
-              updatedFiles[i].progress = "error";
-              return updatedFiles;
+      const response = await AddFolderAPI(filesArray);
+      console.log(response);
+      if (Array.isArray(response)) {
+        setLoad((prevState: FileInfo[] | null) => {
+          if (prevState instanceof Array) {
+            const updatedFiles: FileInfo[] = [...prevState];
+            for (let i = 0; i < updatedFiles.length; i++) {
+              updatedFiles[i].progress = response[i].success ? "success" : "error";
             }
-            return null;
-          });
-        } else {
-          setLoad((prevState) => {
-            if (prevState instanceof Array) {
-              setData((prevData) => {
-                const idExists = prevData.some(
-                  (item) => item.id === data.data.id
-                );
-                if (!idExists) {
-                  return [
-                    ...prevData,
-                    {
-                      category: data.data.category,
-                      drive: data.data.drive,
-                      id: data.data.id,
-                      summary: data.data.summary,
-                      title: data.data.title,
-                      compare: data.data.compare,
-                      year: data.data.year,
-                    },
-                  ];
-                }
-
-                return prevData;
-              });
-              const updatedFiles = [...prevState];
-              console.log(data);
-              console.log(updatedFiles);
-              // setData(updatedFiles)
-              updatedFiles[i].progress = "success";
-              return updatedFiles;
-            }
-            return null;
-          });
-        }
+            return updatedFiles;
+          }
+          return null;
+        });
+        setData(response);
+      } else {
+        console.error("Invalid response format");
       }
     } catch (error) {
       console.error("Error uploading files:", error);
+      // Handle error here
     }
   };
+  
   useEffect(() => {
     console.log(data);
   }, [data]);
+
   return (
     <>
       <div className="flex justify-center">
-        <div className="mt-8 w-fit  ">
+        <div className="mt-8 w-fit">
         {!load ?<FileUploader
             handleChange={handleChange}
             name=""
@@ -114,7 +90,7 @@ function AddFiles() {
                   fileName={item.name}
                   size={item.size}
                   progress={item.progress}
-                  data={data[index]}
+                  data={data[index].data}
                 />
               ))}
         </div>

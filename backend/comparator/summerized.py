@@ -123,6 +123,7 @@ def AddSummary(service, details):
 
     except Exception as e:
         print(f"An error occurred here: {str(e)}")
+        
 def Get_All_Reports(service):
     try:
         fake_folder_id = checkRespectiveFolder(service)

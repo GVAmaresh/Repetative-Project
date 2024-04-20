@@ -11,7 +11,7 @@ export default function Logout() {
       .then((data) => {
         if (data.success) {
           alert("Log out Successfully");
-          router.push("/");
+          router.push("/comparator");
         } else {
           alert("Failed to log out. Please try again.");
         }
@@ -19,7 +19,7 @@ export default function Logout() {
       .catch((error) => {
         alert("An error occurred while logging out. Please try again later.");
       });
-  }, [router]);
+  }, []);
 
   return <>Logging out...</>;
 }
