@@ -17,27 +17,32 @@ const decryptToken = (encryptedToken: string) => {
   return decryptedToken;
 };
 
-export const AddFolderAPI = async (files: File[]) => {
-  const formData = new FormData();
-  files.forEach((file) => {
-    formData.append("files", file);
-  });
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-    if (!response.ok) {
-      throw new Error("Failed to upload files");
-    }
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error uploading files:", error);
-    throw error;
-  }
-};
+// export const AddFolderAPI = async (files: File[]) => {
+//   console.log("Check here 2")
+//   const formData = new FormData();
+//   files.forEach((file) => {
+//     formData.append("files", file);
+//   });
+//   try {
+//     const response = await fetch("http://127.0.0.1:8000/api/upload", {
+//       method: "POST",
+//       body: JSON.stringify(formData),
+//       // headers: {
+//       //   "Content-Type": "application/json",
+//       // },
+
+//     });
+//     if (!response.ok) {
+//       throw new Error("Failed to upload files");
+//     }
+//     const data = await response.json();
+//     console.log(data);
+//     return data;
+//   } catch (error) {
+//     console.error("Error uploading files:", error);
+//     throw error;
+//   }
+// };
 
 export const CheckLoginAPI = async () => {
   try {
@@ -66,29 +71,7 @@ export const CheckLoginAPI = async () => {
   }
 };
 
-export const AddFileAPI = async (files: File) => {
-  const formData = new FormData();
-  formData.append("file", files);
 
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/compare", {
-      method: "POST",
-      body: formData,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Failed to upload files");
-    }
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error uploading files:", error);
-    throw error;
-  }
-};
 
 export const GetFileAPI = async () => {
   try {
@@ -128,6 +111,25 @@ export const DeleteFileAPI = async (ids: string[]) => {
     return data;
   } catch (error) {
     console.error("Error Deleting Summary : ", error);
+    throw error;
+  }
+};
+
+export const CheckExpired = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/Check-Expired", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to Check Expired Tokens");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error deleting account:", error);
     throw error;
   }
 };

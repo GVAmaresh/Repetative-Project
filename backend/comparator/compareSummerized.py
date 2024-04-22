@@ -5,8 +5,9 @@ from io import BytesIO
 import time
 import io
 from comparator.report import checkRespectiveFolder
-from comparator.compare_model.compare2 import checkSimilarity
-
+from comparator.compare_model.compare import compare
+def get_compare_value(report):
+    return report["compare"]
 
 def compareText(service, summary):
     try:
@@ -37,7 +38,8 @@ def compareText(service, summary):
                 file_name = list_files["name"]
 
                 for json_data in existing_details:
-                    value = checkSimilarity(summary[0], json_data["summary"])
+                    print(summary)
+                    value = compare(summary, json_data["summary"])
                     all_reports.append(
                         {
                             "id": json_data["id"],
@@ -49,7 +51,8 @@ def compareText(service, summary):
                             "compare": value,
                         }
                     )
-        return all_reports
+        sorted_reports = sorted(all_reports, key=get_compare_value, reverse=True)
+        return sorted_reports
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")

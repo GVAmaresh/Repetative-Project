@@ -45,18 +45,19 @@ export default function FileFeedback({
   fileName: string;
   size: number;
   progress: string;
-  data: Naming;
+  data: Naming |null;
 }) {
   const [reload, setReload] = React.useState(false);
   const [isClicked, setIsClicked] = React.useState(false);
   console.log(data);
 
   const generate = (
-    dataItem: Naming,
+    dataItem: Naming | null,
     fileName: string,
     size: number,
     progress: string
   ) => {
+    if (!dataItem) return null; 
     return (
       <ListItem key={dataItem.id}>
         <ListItemButton role={undefined} dense>

@@ -9,20 +9,12 @@ import Box from "@mui/material/Box";
 import FileFeedback from "./FileFeedback";
 import { RiCoreosLine } from "react-icons/ri";
 
-// interface Naming {
-//   category: string[];
-//   drive: string;
-//   id: string;
-//   summary: string;
-//   year: string;
-//   title: string;
-// }
 interface Naming {
   category: string[];
   drive: string;
   id: string;
   summary: string;
-  compare:string;
+  compare: string;
   year: string;
   title: string;
 }
@@ -36,13 +28,13 @@ export default function LinearProgressWithDetail({
   fileName: string;
   size: number;
   progress: string;
-  data: Naming;
+  data: Naming | null;
 }) {
   console.log("data = ", data)
   return (
     <>
       <div className="progressCard rounded-lg mb-2  md:w-full">
-        {progress == "progress" ? (
+        {progress === "progress" ? (
           <Box
             sx={{
               display: "flex",
@@ -53,7 +45,7 @@ export default function LinearProgressWithDetail({
           >
             <CircularProgress />
           </Box>
-        ) : progress == "success" ? (
+        ) : progress === "success" ? (
           <div className="text-lime-400 text-2xl w-96 md:text-base md:w-full">
             <FileFeedback
               fileName={fileName}

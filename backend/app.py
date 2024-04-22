@@ -14,6 +14,7 @@ from comparator.report import (
     CheckFolders,
     DeleteReport,
 )
+import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from api_connection.apiConnection import token_file_exists
@@ -27,7 +28,7 @@ from comparator.extract.extract import extract_text_from_pdf
 from comparator.compareSummerized import compareText
 
 from token_operation.driveToken import Delete_Drive_Token, Create_Drive_Token
-from token_operation.tokenOperation import Create_Token_Drive, Delete_Token_File
+from token_operation.tokenOperation import Create_Token_Drive, Delete_Token_File, Expire_Token_File
 
 from pydantic import BaseModel
 class AccountInfo(BaseModel):
@@ -69,19 +70,78 @@ async def is_login(request: AccountCheck):
     try:
         global services
         services, name = Create_Token_Drive(request.name)
+        print("Check here 7")
         if services:
             return {"message": "Successfully logged in", "data": name, "status":"success"}
         else:
             return {"message": "Failed to login", "data": False, "status":"failed"}
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred: {e}")
         return {"message": "Failed to login", "data": False, "status":"failed"}
     
+
+# async def process_file(file):
+#     try:
+#         summerized_id = str(uuid.uuid4())
+#         file_contents = await file.read()
+#         path = f"./delete/{file.filename}"
+#         with open(path, "wb") as f:
+#             f.write(file_contents)
+#         text = extract_text_from_pdf(path)
+#         summary = Summerized_Text(text)
+#         report_id = AddReport(services, summerized_id, path)
+#         AddSummary(
+#             services,
+#             {
+#                 "id": summerized_id,
+#                 "project": "",
+#                 "summary": summary,
+#                 "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
+#                 "year": "2023",
+#                 "category": ["wanna check"],
+#             },
+#         )
+#         os.remove(path)
+#         return {
+#             "message": f"Successfully added Report and Summary for {file.filename}",
+#             "data": {
+#                 "id": summerized_id,
+#                 "compare": "",
+#                 "title": "",
+#                 "summary": summary,
+#                 "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
+#                 "year": "2023",
+#                 "category": ["wanna check"],
+#             },
+#             "success": True,
+#         }
+#     except Exception as e:
+#         return {
+#             "message": f"Error processing {file.filename}: {str(e)}",
+#             "status": "failed",
+#         }
+
+# @app.post("/api/upload")
+# async def upload_files(files: List[UploadFile] = File(...)):
+#     try:
+#         loop = asyncio.get_event_loop()
+#         with ThreadPoolExecutor() as pool:
+#             responses = await asyncio.gather(*[loop.run_in_executor(pool, process_file, file) for file in files])
+#         print("Uploaded Successfully")
+#         return {"data": responses,"status":"success"}
+#     except Exception as e:
+#         print(f"An error occurred: {str(e)}")
+#         return {"message": "Failed to login", "data": False, "status":"failed"}
+
+
 
 async def process_file(file):
     try:
         summerized_id = str(uuid.uuid4())
         file_contents = await file.read()
+        directory = "./delete"
+        os.makedirs(directory, exist_ok=True) 
+        path = os.path.join(directory, file.filename) 
         path = f"./delete/{file.filename}"
         with open(path, "wb") as f:
             f.write(file_contents)
@@ -126,11 +186,11 @@ async def upload_files(files: List[UploadFile] = File(...)):
         with ThreadPoolExecutor() as pool:
             responses = await asyncio.gather(*[loop.run_in_executor(pool, process_file, file) for file in files])
         print("Uploaded Successfully")
-        return {"data": responses,"status":"success"}
+        return {"data": [await response for response in responses], "status": "success"}
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return {"message": "Failed to login", "data": False, "status":"failed"}
-
+        return {"message": "Failed to Upload files", "data": False, "status": "failed"}
+    
 
 @app.post("/api/delete")
 async def delete_files(request: IDRequest):
@@ -216,6 +276,15 @@ async def compare(file: UploadFile = File(...)):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return {"message": "Failed to login", "data": False, "status":"failed"}
+
+@app.get("/api/Check-Expired")
+async def checkExpired():
+    try:
+        Expire_Token_File()
+        return {"message": "Successfully Expired", "status": "success"}
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return {"message": "Failed to Check Expired Tokens", "data": False, "status":"failed"}
 
 
 @app.post("/api/New-Drive")

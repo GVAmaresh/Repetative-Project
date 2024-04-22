@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import LinearProgressWithDetail from "@/components/FeedBack/loadProgress";
-import { AddFileAPI, AddFolderAPI } from "@/lib/fetch";
-import { title } from "process";
+import { AddFileAPI} from "@/lib/fetch2";
 
 interface FileInfo {
   name: string;

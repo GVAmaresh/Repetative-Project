@@ -21,7 +21,7 @@ import Typography from "@mui/material/Typography";
 
 import { primaryNav } from "@/components/SideNav/Nav";
 import Link from "next/link";
-import { CheckLoginAPI } from "@/lib/fetch";
+import { CheckLoginAPI, CheckExpired } from "@/lib/fetch";
 // import { RemoveAccount } from "@/lib/fetch";
 
 const drawerWidth = 240;
@@ -59,11 +59,18 @@ export default function SideNav({
   };
 
   React.useEffect(() => {
-    console.log("Is it running")
     CheckLoginAPI().then((data) => {
       console.log(data);
-      if(data.status === "success"){
-        setLogin(true)
+      if (data.status === "success") {
+        setLogin(true);
+      }
+    });
+    CheckExpired().then((data) => {
+      console.log(data);
+      if (data.status === "success") {
+        console.log("Expired Tokens Checked Successfully");
+      } else {
+        console.log("Troble in Checking Expired Tokens");
       }
     });
   }, []);
@@ -174,7 +181,7 @@ export default function SideNav({
           }}
         >
           <Toolbar />
-          {isLogin?children:<>Loading...</>}
+          {isLogin ? children : <>Loading...</>}
         </Box>
       </Box>
     </ThemeProvider>

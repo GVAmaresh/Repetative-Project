@@ -155,7 +155,7 @@ def Create_Token_Drive(name="current"):
         file_name = ""
         print("Check here 1")
         for list_files in list_all_files:
-            print("List Files = ",list_files["name"])
+            print("List Files = ", list_files["name"])
             if list_files["name"].startswith("token_json"):
                 latest_file_id = str(list_files["id"])
                 existing_data = service.files().get_media(fileId=latest_file_id).execute()
@@ -178,6 +178,7 @@ def Create_Token_Drive(name="current"):
                         os.remove(output)
                         print("Check here 5")
                         print(existing_details[name])
+                        print("Check here 6")
                         return service, existing_details[name]["token_name"]
                     
                     else:
