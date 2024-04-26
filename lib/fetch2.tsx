@@ -1,4 +1,4 @@
-
+// http://127.0.0.1:8000
 export const AddFolderAPI = async (files: File[]) => {
     console.log("Check here 2")
     const formData = new FormData();
@@ -6,7 +6,7 @@ export const AddFolderAPI = async (files: File[]) => {
       formData.append("files", file);
     });
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload", {
+      const response = await fetch("https://repetative-project-backend.netlify.app/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -37,7 +37,7 @@ export const AddFolderAPI = async (files: File[]) => {
     formData.append("file", files);
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/compare", {
+      const response = await fetch("https://repetative-project-backend.netlify.app/api/compare", {
         method: "POST",
         body: formData,
         // headers: {

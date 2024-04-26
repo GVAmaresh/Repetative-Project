@@ -83,7 +83,7 @@ export default function FileFeedback({
 
             <BasicTable
   rows={[
-    { name: 'Category', imf: dataItem.category},
+    // { name: 'Category', imf: dataItem.category},
     { name: 'Drive', imf: dataItem.drive},
     { name: 'Summary', imf: dataItem.summary},
     { name: 'Year', imf: dataItem.year},
