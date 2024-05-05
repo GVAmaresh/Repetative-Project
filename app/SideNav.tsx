@@ -130,7 +130,7 @@ export default function SideNav({
             </IconButton>
             <Typography variant="h6" noWrap component="div">
               <div className=" font-extrabold text-xl md:text-base">
-                Repetative Project X
+                Repetative Project
               </div>
             </Typography>
           </Toolbar>
