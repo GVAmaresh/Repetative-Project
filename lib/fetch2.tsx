@@ -1,4 +1,8 @@
 // http://127.0.0.1:8000
+const URL = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
+  : "http://localhost:8000/api";
+
 export const AddFolderAPI = async (files: File[]) => {
     console.log("Check here 2")
     const formData = new FormData();
@@ -6,7 +10,7 @@ export const AddFolderAPI = async (files: File[]) => {
       formData.append("files", file);
     });
     try {
-      const response = await fetch("https://repetative-project-backend.netlify.app/api/upload", {
+      const response = await fetch(`${URL}/upload`, {
         method: "POST",
         body: formData,
       });
@@ -16,13 +20,13 @@ export const AddFolderAPI = async (files: File[]) => {
       const responseData = await response.json();
       console.log(responseData);
       const newData = responseData.data.map((item: any) => ({
-        id: item.data.id,
-        compare: item.data.compare,
-        title: item.data.title,
-        summary: item.data.summary,
-        drive: item.data.drive,
-        year: item.data.year,
-        category: item.data.category,
+        id: item.data.id || "",
+        compare: item.data.compare || "",
+        title: item.data.title || "",
+        summary: item.data.summary || "",
+        drive: item.data.drive || "",
+        year: item.data.year || "",
+        category: item.data.category || "",
     }));
 
     return {data: newData, status: true};
@@ -37,7 +41,7 @@ export const AddFolderAPI = async (files: File[]) => {
     formData.append("file", files);
   
     try {
-      const response = await fetch("https://repetative-project-backend.netlify.app/api/compare", {
+      const response = await fetch(`${URL}/compare`, {
         method: "POST",
         body: formData,
         // headers: {

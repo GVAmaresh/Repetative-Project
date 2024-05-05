@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import LinearProgressWithDetail from "@/components/FeedBack/loadProgress";
-import { AddFileAPI} from "@/lib/fetch2";
+import { AddFileAPI } from "@/lib/fetch2";
 
 interface FileInfo {
   name: string;
@@ -22,6 +22,7 @@ interface Naming {
 
 function AddFileCompare() {
   const [load, setLoad] = useState<FileInfo[] | null>(null);
+  const [summary, setSummary] = useState<string>("");
   const [newData, setNewData] = useState<Naming[] | []>([]);
   const handleChange = async (files: File[]) => {
     if (!files || files.length === 0) {
@@ -76,6 +77,7 @@ function AddFileCompare() {
               //   return prevData;
               // });
               setNewData(data.data);
+              setSummary(data.summary);
               const updatedFiles = [...prevState];
               console.log(data.data);
               console.log(data.data[1]);
@@ -107,18 +109,27 @@ function AddFileCompare() {
               types={["pdf"]}
               multiple={true}
               maxSize={5}
-            ></FileUploader>
+            />
           ) : (
-            newData.length >= 1 &&
-            newData.map((item) => (
-              <LinearProgressWithDetail
-                key={item.id}
-                fileName=""
-                size={0}
-                progress="success"
-                data={item}
-              />
-            ))
+            newData.length >= 1 && (
+              <div className="">
+                <div className=" ml-4 p-6 md:ml-28 md:mr-20 mb-10 border-2 rounded-tl-3xl rounded-br-3xl">
+                  <div className="">Summary: </div>
+                  <div className="pl-4 pr-1 md:pl-20 md:pr-32">{summary}</div>
+                </div>
+                <div className="">
+                {newData.map((item) => (
+                  <LinearProgressWithDetail
+                    key={item.id}
+                    fileName=""
+                    size={0}
+                    progress="success"
+                    data={item}
+                  />
+                ))}
+                </div>
+              </div>
+            )
           )}
         </div>
       </div>

@@ -46,7 +46,7 @@ export default function LinearProgressWithDetail({
             <CircularProgress />
           </Box>
         ) : progress === "success" ? (
-          <div className="text-lime-400 text-2xl w-96 md:text-base md:w-full">
+          <div className="text-lime-400 text-2xl w-96 md:text-base md:w-full ">
             <FileFeedback
               fileName={fileName}
               size={size}

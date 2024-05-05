@@ -71,11 +71,11 @@ export default function FileFeedback({
                 event.preventDefault();
               }}
             >
-              <div className="summary-container ">
-                <div className="font-bold">{dataItem.title || "Heading"}</div>
+              <div className="summary-container pb-2 pt-2">
+                <div className="font-bold">{dataItem.title || "No Name"}</div>
                 <div className="font-thin text-sm">
                   {(dataItem.compare != "" && `Compare: ${dataItem.compare}`) ||
-                    "Compare"}
+                    ""}
                 </div>
               </div>
             </AccordionSummary>

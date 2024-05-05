@@ -11,6 +11,11 @@ const encryptToken = (token: string) => {
   return encryptedToken;
 };
 
+const URL = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
+  : "http://localhost:8000/api";
+
+
 const decryptToken = (encryptedToken: string) => {
   const decryptedBytes = CryptoJS.AES.decrypt(encryptedToken, "SO_MY_NEW_KEY");
   const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
@@ -50,7 +55,7 @@ export const CheckLoginAPI = async () => {
     let cookie = cookies().get("token");
     let token = cookie ? decryptToken(cookie.value) : uuidv4();
     console.log(token);
-    const response = await fetch("https://repetative-project-backend.netlify.app/api/isLogin", {
+    const response = await fetch(`${URL}/isLogin`, {
       method: "POST",
       body: JSON.stringify({ name: token }),
       headers: {
@@ -75,7 +80,7 @@ export const CheckLoginAPI = async () => {
 
 export const GetFileAPI = async () => {
   try {
-    const response = await fetch("https://repetative-project-backend.netlify.app/api/getReports", {
+    const response = await fetch(`${URL}/getReports`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -95,7 +100,7 @@ export const GetFileAPI = async () => {
 
 export const DeleteFileAPI = async (ids: string[]) => {
   try {
-    const response = await fetch("https://repetative-project-backend.netlify.app/api/delete", {
+    const response = await fetch(`${URL}/delete`, {
       method: "POST",
       body: JSON.stringify({ ids: ids }),
       headers: {
@@ -107,6 +112,7 @@ export const DeleteFileAPI = async (ids: string[]) => {
     }
     const data = await response.json();
     console.log("Deleted Sucessfully");
+    
     console.log(data);
     return data;
   } catch (error) {
@@ -117,7 +123,7 @@ export const DeleteFileAPI = async (ids: string[]) => {
 
 export const CheckExpired = async () => {
   try {
-    const response = await fetch("https://repetative-project-backend.netlify.app/api/Check-Expired", {
+    const response = await fetch(`${URL}/Check-Expired`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -140,7 +146,7 @@ export const RemoveAccount = async () => {
     let oldToken = cookie ? decryptToken(cookie.value) : "";
     let newToken = uuidv4();
 
-    const response = await fetch("https://repetative-project-backend.netlify.app/api/logout", {
+    const response = await fetch(`${URL}/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -34,7 +34,8 @@ interface Naming {
   id: string;
   summary: string;
   year: string;
-  title: string;
+  title?: string;
+  project?: string;
 }
 export default function DeleteReport() {
   const [getData, setData] = React.useState<Naming[] | null>(null);
@@ -46,7 +47,14 @@ export default function DeleteReport() {
   const handleDelete = () => {
     console.log(checked);
     setIsClicked(!isClicked);
-    DeleteFileAPI(checked).then((data) => data.success && setReload(!reload));
+    DeleteFileAPI(checked).then((data) => {
+      if(data.success) {
+        setIsClicked(false)
+        GetFileAPI().then((data) => {
+          setData(data.data);
+        });
+      }
+    });
   };
   const handleToggle = (value: string) => () => {
     const currentIndex = checked.indexOf(value);
@@ -89,15 +97,11 @@ export default function DeleteReport() {
                 event.preventDefault();
               }}
             >
-              {item.title || "Heading"}
+              {item.project || "No Name"}
             </AccordionSummary>
             <AccordionDetails>
               <table>
                 <tbody>
-                  <tr>
-                    <td>Category</td>
-                    <td>{item.category}</td>
-                  </tr>
                   <tr>
                     <td>Drive</td>
                     <td className="text-cyan-300">
@@ -133,6 +137,7 @@ export default function DeleteReport() {
       setData(data.data);
     });
   }, [setReload, setData]);
+
   return (
     <Demo>
       <div className="font-extrabold border-b-2 w-7 md:w-1/3 p-2 md:ml-20 flex items-center justify-between">

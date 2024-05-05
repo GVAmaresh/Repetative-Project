@@ -1,6 +1,7 @@
 from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 import time
 import io
@@ -47,7 +48,7 @@ def compareText(service, summary):
                             "drive": json_data["drive"],
                             "summary": json_data["summary"],
                             "category": json_data["category"],
-                            "title": "",
+                            "title": json_data["project"],
                             "compare": value,
                         }
                     )

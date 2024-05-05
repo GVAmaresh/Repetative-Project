@@ -152,7 +152,7 @@ async def process_file(file):
             services,
             {
                 "id": summerized_id,
-                "project": "",
+                "project": file.filename,
                 "summary": summary,
                 "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
                 "year": "2023",
@@ -160,12 +160,15 @@ async def process_file(file):
             },
         )
         os.remove(path)
+        # os.remove(os.path.join(directory, file.filename))
+        print("Here actually running properly!!!!!!!!!!!")
+        print(file.filename, summerized_id, summary)
         return {
             "message": f"Successfully added Report and Summary for {file.filename}",
             "data": {
                 "id": summerized_id,
                 "compare": "",
-                "title": "",
+                "title": file.filename,
                 "summary": summary,
                 "drive": f"https://drive.google.com/file/d/{report_id}/view?usp=sharing",
                 "year": "2023",
@@ -239,6 +242,7 @@ async def get_reports():
                     os.remove(file_path)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
+        data.reverse()
         return {"data": data, "success": True}
     except Exception as e:
         print(f"An error occurred: {str(e)}")
